@@ -1,158 +1,146 @@
-MiApp – Sistema de Inventario Profesional
+# MiApp – Sistema de Inventario Profesional
 
 MiApp es un sistema de inventario desarrollado en .NET 8 (WinForms) con arquitectura en capas y base de datos PostgreSQL.
 
 Incluye:
 
-Gestión de productos
+- Gestión de productos
+- Control de stock con bloqueo transaccional
+- Sistema de usuarios con roles
+- Auditoría completa de acciones
+- Arquitectura profesional separada en Domain, Business, Data y UI
 
-Control de stock con bloqueo transaccional
 
-Sistema de usuarios con roles
+## Características
 
-Auditoría completa de acciones
 
-Arquitectura profesional separada en Domain, Business, Data y UI
+### Gestión de Usuarios
 
-🚀 Características
-👥 Gestión de Usuarios
+- Login con autenticación segura
+- Roles: Admin / Operador
+- Creación de usuarios (solo Admin)
+- Activar / Desactivar usuarios
+- Logout con registro en auditoría
+- Contraseñas hasheadas (SHA256)
 
-Login con autenticación segura
 
-Roles: Admin / Operador
+### Gestión de Productos
 
-Creación de usuarios (solo Admin)
+- Crear productos
+- Soft delete (no eliminación física)
+- Búsqueda por nombre
+- Validaciones de negocio
+- Restricción de duplicados por nombre normalizado
 
-Activar / Desactivar usuarios
 
-Logout con registro en auditoría
+### Control de Stock
 
-Contraseñas hasheadas (SHA256)
+- Stock actual
+- Stock mínimo
+- Alerta visual automática de bajo stock
+- No permite stock negativo
+- Validación antes de salida
 
-📦 Gestión de Productos
 
-Crear productos
+### Movimientos de Inventario
 
-Soft delete (no eliminación física)
+- Entrada de stock
+- Salida de stock
+- Transacciones seguras
+- Bloqueo de fila (FOR UPDATE)
+- Historial persistente en base de datos
 
-Búsqueda por nombre
 
-Validaciones de negocio
-
-Restricción de duplicados por nombre normalizado
-
-📊 Control de Stock
-
-Stock actual
-
-Stock mínimo
-
-Alerta visual automática de bajo stock
-
-No permite stock negativo
-
-Validación antes de salida
-
-🔄 Movimientos de Inventario
-
-Entrada de stock
-
-Salida de stock
-
-Transacciones seguras
-
-Bloqueo de fila (FOR UPDATE)
-
-Historial persistente en base de datos
-
-🧾 Auditoría Completa
+### Auditoría Completa
 
 Se registran automáticamente:
 
-LOGIN
-
-LOGOUT
-
-CREATE_PRODUCT
-
-DELETE_PRODUCT
-
-STOCK_ENTRY
-
-STOCK_EXIT
+- LOGIN
+- LOGOUT
+- CREATE_PRODUCT
+- DELETE_PRODUCT
+- STOCK_ENTRY
+- STOCK_EXIT
 
 Cada registro contiene:
 
-Usuario
+- Usuario
+- Acción
+- Descripción
+- Fecha UTC
 
-Acción
 
-Descripción
-
-Fecha UTC
-
-🧠 Arquitectura Profesional
+## Arquitectura Profesional
 
 Separación estricta en capas:
 
 UI → Business → Data → Domain
-🔹 UI
+
+
+### UI
 
 WinForms (interfaz gráfica)
 
-🔹 Business
 
-Reglas de negocio
-Validaciones
-Permisos
+### Business
 
-🔹 Data
+- Reglas de negocio
+- Validaciones
+- Permisos
 
-Acceso a PostgreSQL mediante Npgsql
-Transacciones
-Bloqueo de concurrencia
 
-🔹 Domain
+### Data
+
+- Acceso a PostgreSQL mediante Npgsql
+- Transacciones
+- Bloqueo de concurrencia
+
+
+### Domain
 
 Entidades del sistema (User, Product, AuditLog, etc.)
 
-🏗 Estructura del Proyecto
+
+## Estructura del Proyecto
 MiApp.sln
 │
 ├── MiApp.Domain
-│   ├── Product.cs
-│   ├── User.cs
-│   ├── AuditLog.cs
-│   └── Enums (UserRole, etc.)
-│
+│ ├── Product.cs
+│ ├── User.cs
+│ ├── AuditLog.cs
+│ └── Enums (UserRole, etc.)
+
 ├── MiApp.Business
-│   ├── ProductService.cs
-│   ├── AuthService.cs
-│   ├── PermissionService.cs
-│   └── PasswordHelper.cs
-│
+│ ├── ProductService.cs
+│ ├── AuthService.cs
+│ ├── PermissionService.cs
+│ └── PasswordHelper.cs
+
 ├── MiApp.Data
-│   └── DatabaseService.cs
-│
+│ └── DatabaseService.cs
+
 └── MiApp.UI
-    ├── LoginForm.cs
-    ├── Form1.cs
-    ├── UsersForm.cs
-    └── AuditForm.cs
-🛠 Tecnologías Utilizadas
+├── LoginForm.cs
+├── Form1.cs
+├── UsersForm.cs
+└── AuditForm.cs
 
-.NET 8
 
-WinForms
+## Tecnologías Utilizadas
 
-PostgreSQL
+- .NET 8
+- WinForms
+- PostgreSQL
+- Npgsql
+- DotNetEnv
 
-Npgsql
 
-DotNetEnv
+## Base de Datos
 
-🗄 Base de Datos
-📦 Tabla products
+
+### Tabla products
+
+```sql
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -169,25 +157,25 @@ CREATE TABLE products (
     updated_at TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE
 );
-🔄 Tabla stock_movements
+
 CREATE TABLE stock_movements (
     id SERIAL PRIMARY KEY,
     product_id INTEGER NOT NULL REFERENCES products(id),
-    movement_type INTEGER NOT NULL, -- 1=Entrada, 2=Salida
+    movement_type INTEGER NOT NULL,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     created_at TIMESTAMP DEFAULT NOW(),
     user_id INTEGER NOT NULL REFERENCES users(id)
 );
-👥 Tabla users
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role INTEGER NOT NULL, -- 0=Operador, 1=Admin
+    role INTEGER NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
-🧾 Tabla audit_logs
+
 CREATE TABLE audit_logs (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
@@ -195,24 +183,22 @@ CREATE TABLE audit_logs (
     description TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
-⚙ Configuración
-1️⃣ Clonar repositorio
+
 git clone https://github.com/tuusuario/miapp.git
 cd miapp
-2️⃣ Configurar archivo .env
-
-Crear archivo .env en la raíz:
 
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=miapp
 DB_USER=postgres
 DB_PASSWORD=tu_password
-3️⃣ Restaurar dependencias
+
+
 dotnet restore
-4️⃣ Ejecutar aplicación
+
 dotnet run --project MiApp.UI
-🔒 Seguridad y Transacciones
+
+Seguridad y Transacciones
 
 El sistema utiliza:
 
@@ -234,7 +220,8 @@ SELECT stock_actual
 FROM products 
 WHERE id = @id 
 FOR UPDATE;
-🎨 Características Visuales
+
+Características Visuales
 
 Resaltado automático de productos con stock bajo
 
@@ -246,7 +233,7 @@ Botones habilitados según rol
 
 Manejo de errores con MessageBox
 
-📈 Próximas Mejoras
+Próximas Mejoras
 
 Migrar a BCrypt
 
@@ -262,7 +249,7 @@ API REST
 
 Versión Web
 
-🧠 Conceptos Aplicados
+Conceptos Aplicados
 
 Arquitectura en capas
 
@@ -278,10 +265,10 @@ Seguridad basada en roles
 
 Separación de responsabilidades
 
-👨‍💻 Autor
-
+Autor
+Pedro Basualto
 Proyecto desarrollado como sistema profesional de inventario en .NET con enfoque empresarial.
 
-📄 Licencia
+Licencia
 
 MIT License
