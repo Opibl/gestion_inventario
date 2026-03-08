@@ -1,0 +1,47 @@
+# Build folders
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Publish folder
+publish/
+
+# Environment variables
+.env
+
+# NuGet
+*.nupkg
+packages/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Node (por si usas frontend)
+node_modules/
+dist/
+
+# Coverage / testing
+coverage/
+TestResults/
+
+# Executables
+*.exe
+*.dll
+*.pdb

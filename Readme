@@ -1,0 +1,287 @@
+MiApp – Sistema de Inventario Profesional
+
+MiApp es un sistema de inventario desarrollado en .NET 8 (WinForms) con arquitectura en capas y base de datos PostgreSQL.
+
+Incluye:
+
+Gestión de productos
+
+Control de stock con bloqueo transaccional
+
+Sistema de usuarios con roles
+
+Auditoría completa de acciones
+
+Arquitectura profesional separada en Domain, Business, Data y UI
+
+🚀 Características
+👥 Gestión de Usuarios
+
+Login con autenticación segura
+
+Roles: Admin / Operador
+
+Creación de usuarios (solo Admin)
+
+Activar / Desactivar usuarios
+
+Logout con registro en auditoría
+
+Contraseñas hasheadas (SHA256)
+
+📦 Gestión de Productos
+
+Crear productos
+
+Soft delete (no eliminación física)
+
+Búsqueda por nombre
+
+Validaciones de negocio
+
+Restricción de duplicados por nombre normalizado
+
+📊 Control de Stock
+
+Stock actual
+
+Stock mínimo
+
+Alerta visual automática de bajo stock
+
+No permite stock negativo
+
+Validación antes de salida
+
+🔄 Movimientos de Inventario
+
+Entrada de stock
+
+Salida de stock
+
+Transacciones seguras
+
+Bloqueo de fila (FOR UPDATE)
+
+Historial persistente en base de datos
+
+🧾 Auditoría Completa
+
+Se registran automáticamente:
+
+LOGIN
+
+LOGOUT
+
+CREATE_PRODUCT
+
+DELETE_PRODUCT
+
+STOCK_ENTRY
+
+STOCK_EXIT
+
+Cada registro contiene:
+
+Usuario
+
+Acción
+
+Descripción
+
+Fecha UTC
+
+🧠 Arquitectura Profesional
+
+Separación estricta en capas:
+
+UI → Business → Data → Domain
+🔹 UI
+
+WinForms (interfaz gráfica)
+
+🔹 Business
+
+Reglas de negocio
+Validaciones
+Permisos
+
+🔹 Data
+
+Acceso a PostgreSQL mediante Npgsql
+Transacciones
+Bloqueo de concurrencia
+
+🔹 Domain
+
+Entidades del sistema (User, Product, AuditLog, etc.)
+
+🏗 Estructura del Proyecto
+MiApp.sln
+│
+├── MiApp.Domain
+│   ├── Product.cs
+│   ├── User.cs
+│   ├── AuditLog.cs
+│   └── Enums (UserRole, etc.)
+│
+├── MiApp.Business
+│   ├── ProductService.cs
+│   ├── AuthService.cs
+│   ├── PermissionService.cs
+│   └── PasswordHelper.cs
+│
+├── MiApp.Data
+│   └── DatabaseService.cs
+│
+└── MiApp.UI
+    ├── LoginForm.cs
+    ├── Form1.cs
+    ├── UsersForm.cs
+    └── AuditForm.cs
+🛠 Tecnologías Utilizadas
+
+.NET 8
+
+WinForms
+
+PostgreSQL
+
+Npgsql
+
+DotNetEnv
+
+🗄 Base de Datos
+📦 Tabla products
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    normalized_name TEXT UNIQUE NOT NULL,
+    barcode VARCHAR(32),
+    price INTEGER NOT NULL CHECK (price >= 0),
+    eco_score INTEGER CHECK (eco_score BETWEEN 0 AND 100),
+    social_score INTEGER CHECK (social_score BETWEEN 0 AND 100),
+    category TEXT,
+    image_url TEXT,
+    stock_actual INTEGER NOT NULL DEFAULT 0,
+    stock_minimo INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE
+);
+🔄 Tabla stock_movements
+CREATE TABLE stock_movements (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    movement_type INTEGER NOT NULL, -- 1=Entrada, 2=Salida
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    created_at TIMESTAMP DEFAULT NOW(),
+    user_id INTEGER NOT NULL REFERENCES users(id)
+);
+👥 Tabla users
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role INTEGER NOT NULL, -- 0=Operador, 1=Admin
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+🧾 Tabla audit_logs
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    action TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+⚙ Configuración
+1️⃣ Clonar repositorio
+git clone https://github.com/tuusuario/miapp.git
+cd miapp
+2️⃣ Configurar archivo .env
+
+Crear archivo .env en la raíz:
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=miapp
+DB_USER=postgres
+DB_PASSWORD=tu_password
+3️⃣ Restaurar dependencias
+dotnet restore
+4️⃣ Ejecutar aplicación
+dotnet run --project MiApp.UI
+🔒 Seguridad y Transacciones
+
+El sistema utiliza:
+
+FOR UPDATE para bloqueo de filas
+
+Transacciones SQL
+
+Rollback automático en caso de error
+
+Validación de stock antes de salida
+
+Contraseñas hasheadas
+
+Control de permisos por rol
+
+Ejemplo de bloqueo:
+
+SELECT stock_actual 
+FROM products 
+WHERE id = @id 
+FOR UPDATE;
+🎨 Características Visuales
+
+Resaltado automático de productos con stock bajo
+
+Grid en modo solo lectura
+
+Columnas técnicas ocultas
+
+Botones habilitados según rol
+
+Manejo de errores con MessageBox
+
+📈 Próximas Mejoras
+
+Migrar a BCrypt
+
+Dashboard con métricas
+
+Reportes exportables (Excel / PDF)
+
+Historial visual por producto
+
+Paginación
+
+API REST
+
+Versión Web
+
+🧠 Conceptos Aplicados
+
+Arquitectura en capas
+
+Principio de responsabilidad única
+
+Control de concurrencia
+
+Soft delete
+
+Auditoría de eventos críticos
+
+Seguridad basada en roles
+
+Separación de responsabilidades
+
+👨‍💻 Autor
+
+Proyecto desarrollado como sistema profesional de inventario en .NET con enfoque empresarial.
+
+📄 Licencia
+
+MIT License
