@@ -7,6 +7,7 @@ public class ModernPanel : Panel
     public ModernPanel()
     {
         DoubleBuffered = true;
+        ResizeRedraw = true;
         BackColor = Color.White;
         Resize += ModernPanel_Resize;
     }

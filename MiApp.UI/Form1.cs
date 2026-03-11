@@ -1,9 +1,11 @@
 using MiApp.Business;
 using MiApp.Data;
 using MiApp.Domain;
+using System.Runtime.Versioning;
 
 namespace MiApp.UI;
 
+[SupportedOSPlatform("windows")]
 public class ProductForm : Form
 {
     public Product? Product { get; private set; }
@@ -141,7 +143,7 @@ public class ProductForm : Form
         this.Close();
     }
 }
-
+[SupportedOSPlatform("windows")]
 public class Form1 : Form
 {
     private readonly User _currentUser;

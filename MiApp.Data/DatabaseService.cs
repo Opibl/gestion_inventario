@@ -9,10 +9,16 @@ namespace MiApp.Data
 {
     public class DatabaseService
     {
-        private readonly string _connectionString;
+        private readonly string? _connectionString;
+        private readonly bool _isTest;
 
-        public DatabaseService()
+        public DatabaseService(bool isTest = false)
         {
+            _isTest = isTest;
+
+            if (_isTest)
+                return;
+
             Env.Load();
 
             string? host = Environment.GetEnvironmentVariable("DB_HOST");
@@ -42,7 +48,7 @@ namespace MiApp.Data
 
         // ========================= GET PRODUCTS =========================
 
-        public async Task<List<Product>> GetProductsAsync(string? search = null)
+        public virtual async Task<List<Product>> GetProductsAsync(string? search = null)
         {
             var products = new List<Product>();
 
@@ -94,7 +100,7 @@ namespace MiApp.Data
 
         // ========================= ADD PRODUCT =========================
 
-        public async Task AddProductAsync(Product p)
+        public virtual async Task AddProductAsync(Product p)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -126,7 +132,7 @@ namespace MiApp.Data
 
         // ========================= DELETE PRODUCT =========================
 
-        public async Task DeleteProductAsync(int id)
+        public virtual async Task DeleteProductAsync(int id)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -143,7 +149,7 @@ namespace MiApp.Data
         }
         // ========================= UPDATE PRODUCT =========================
 
-        public async Task UpdateProductAsync(Product p)
+        public virtual async Task UpdateProductAsync(Product p)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -180,7 +186,7 @@ namespace MiApp.Data
         }
         // ========================= REGISTER STOCK MOVEMENT =========================
 
-        public async Task RegisterStockMovementAsync(int productId, int movementType, int quantity, string userName)
+        public virtual async Task RegisterStockMovementAsync(int productId, int movementType, int quantity, string userName)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -252,7 +258,7 @@ namespace MiApp.Data
 
         // ========================= AUTH =========================
 
-        public async Task<User?> GetUserByUsernameAsync(string username)
+        public virtual async Task<User?> GetUserByUsernameAsync(string username)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -281,7 +287,7 @@ namespace MiApp.Data
 
         // ========================= AUDIT =========================
 
-        public async Task InsertAuditAsync(AuditLog log)
+        public virtual async Task InsertAuditAsync(AuditLog log)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -303,7 +309,7 @@ namespace MiApp.Data
 
         // ========================= DASHBOARD METRICS =========================
 
-        public async Task<(int total, double avgEco, int lowEco)> GetMetricsAsync()
+        public virtual async Task<(int total, double avgEco, int lowEco)> GetMetricsAsync()
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -333,7 +339,7 @@ namespace MiApp.Data
 
 
 
-        public async Task<List<(string Username, string Action, string Description, DateTime CreatedAt)>> GetAuditLogsAsync()
+        public virtual async Task<List<(string Username, string Action, string Description, DateTime CreatedAt)>> GetAuditLogsAsync()
         {
             var list = new List<(string, string, string, DateTime)>();
 
@@ -363,7 +369,7 @@ namespace MiApp.Data
         }
 
 
-        public async Task<List<User>> GetUsersAsync()
+        public virtual async Task<List<User>> GetUsersAsync()
         {
             var list = new List<User>();
 
@@ -392,7 +398,7 @@ namespace MiApp.Data
             return list;
         }
 
-        public async Task CreateUserAsync(string username, string passwordHash, UserRole role)
+        public virtual async Task CreateUserAsync(string username, string passwordHash, UserRole role)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
@@ -409,7 +415,7 @@ namespace MiApp.Data
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task ToggleUserActiveAsync(int userId, bool isActive)
+        public virtual  async Task ToggleUserActiveAsync(int userId, bool isActive)
         {
             await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();

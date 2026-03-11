@@ -1,8 +1,9 @@
 using MiApp.Business;
 using System.Drawing.Drawing2D;
+using System.Runtime.Versioning;
 
 namespace MiApp.UI;
-
+[SupportedOSPlatform("windows")]
 public class DashboardForm : Form
 {
     private readonly DashboardService _dashboardService;
@@ -177,9 +178,9 @@ public class DashboardForm : Form
 
         var g = e.Graphics;
         g.SmoothingMode = SmoothingMode.AntiAlias;
-
-        using var backBrush = new SolidBrush(Color.FromArgb(40, 40, 40));
-        g.FillRectangle(backBrush, e.ClipRectangle);
+        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        // LIMPIA TODO EL PANEL
+        g.Clear(panelBars.BackColor);
 
         int width = panelBars.Width;
         int height = panelBars.Height;
@@ -214,7 +215,7 @@ public class DashboardForm : Form
             g.DrawString(
                 label,
                 font,
-                Brushes.LightGray,
+                new SolidBrush(Color.FromArgb(60,60,60)),
                 paddingLeft - size.Width - 8,
                 y - size.Height / 2);
         }
@@ -222,6 +223,23 @@ public class DashboardForm : Form
         // Ejes
         g.DrawLine(axisPen, paddingLeft, paddingTop, paddingLeft, baseY);
         g.DrawLine(axisPen, paddingLeft, baseY, width - 20, baseY);
+        using var axisFont = new Font("Segoe UI", 10, FontStyle.Bold);
+
+        var yLabel = "Puntaje (%)";
+        var ySize = g.MeasureString(yLabel, axisFont);
+
+        // Rotar para eje vertical
+        g.TranslateTransform(20, paddingTop + chartHeight / 2);
+        g.RotateTransform(-90);
+
+        g.DrawString(
+            yLabel,
+            axisFont,
+            Brushes.Black,
+            -ySize.Width / 2,
+            -ySize.Height / 2);
+
+        g.ResetTransform();
 
         // --- CALCULAR BARRAS ---
         int barWidth = 80;
@@ -229,8 +247,8 @@ public class DashboardForm : Form
         int ecoHeight = (int)(ecoPromedio / 100 * chartHeight * animationProgress);
         int socialHeight = (int)(socialPromedio / 100 * chartHeight * animationProgress);
 
-        int ecoX = paddingLeft + chartWidth / 3 - barWidth / 2;
-        int socialX = paddingLeft + chartWidth * 2 / 3 - barWidth / 2;
+        int ecoX = paddingLeft + chartWidth / 4 - barWidth / 2;
+        int socialX = paddingLeft + chartWidth * 3 / 4 - barWidth / 2;
 
         ecoBarRect = ecoHeight > 0
             ? new Rectangle(ecoX, baseY - ecoHeight, barWidth, ecoHeight)
@@ -273,6 +291,17 @@ public class DashboardForm : Form
         g.DrawString("EcoScore", labelFont, Brushes.White, ecoX - 10, baseY + 8);
         g.DrawString("SocialScore", labelFont, Brushes.White, socialX - 15, baseY + 8);
 
+        using var axisBottomFont = new Font("Segoe UI", 10, FontStyle.Bold);
+
+        string xLabel = "Indicadores ESG";
+        var xSize = g.MeasureString(xLabel, axisBottomFont);
+
+        g.DrawString(
+            xLabel,
+            axisBottomFont,
+            Brushes.Black,
+            width / 2 - xSize.Width / 2,
+            height - 30);
         // Valores arriba de barras
         if (!ecoBarRect.IsEmpty)
             g.DrawString($"{ecoPromedio:F1}", labelFont, Brushes.White, ecoX + 10, ecoBarRect.Y - 25);
@@ -298,9 +327,9 @@ public class DashboardForm : Form
 
         var g = e.Graphics;
         g.SmoothingMode = SmoothingMode.AntiAlias;
-
-        using var backBrush = new SolidBrush(Color.FromArgb(40, 40, 40));
-        g.FillRectangle(backBrush, e.ClipRectangle);
+        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        // LIMPIA TODO EL PANEL
+        g.Clear(panelPie.BackColor);
 
         int width = panelPie.Width;
         int height = panelPie.Height;
@@ -308,7 +337,7 @@ public class DashboardForm : Form
         int size = (int)(Math.Min(width, height) * 0.65);
 
         int x = (width - size) / 2;
-        int y = (height - size) / 2 - 20;
+        int y = (height - size) / 2;
 
         Rectangle rect = new Rectangle(x, y, size, size);
 
@@ -379,10 +408,10 @@ public class DashboardForm : Form
 
         // Verde
         g.FillRectangle(new SolidBrush(colorNormal), width / 2 - 120, legendY, 14, 14);
-        g.DrawString($"Stock Normal ({stockNormal})", legendFont, Brushes.LightGray, width / 2 - 100, legendY - 2);
+        g.DrawString($"Stock Normal ({stockNormal})", legendFont, Brushes.Black, width / 2 - 100, legendY - 2);
 
         // Rojo
         g.FillRectangle(new SolidBrush(colorBajo), width / 2 + 40, legendY, 14, 14);
-        g.DrawString($"Stock Bajo ({stockBajo})", legendFont, Brushes.LightGray, width / 2 + 60, legendY - 2);
+        g.DrawString($"Stock Bajo ({stockBajo})", legendFont, Brushes.Black, width / 2 + 60, legendY - 2);
     }
 }

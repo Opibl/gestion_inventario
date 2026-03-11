@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiApp.Business", "MiApp.Bus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiApp.UI", "MiApp.UI\MiApp.UI.csproj", "{EBF054F2-15AC-47D9-B758-E69AE94A1DF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiApp.Tests", "MiApp.Tests\MiApp.Tests.csproj", "{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{EBF054F2-15AC-47D9-B758-E69AE94A1DF4}.Release|x64.Build.0 = Release|Any CPU
 		{EBF054F2-15AC-47D9-B758-E69AE94A1DF4}.Release|x86.ActiveCfg = Release|Any CPU
 		{EBF054F2-15AC-47D9-B758-E69AE94A1DF4}.Release|x86.Build.0 = Release|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Release|x64.Build.0 = Release|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{93EBC2AF-DD7B-49C8-8BFC-24EC324402FA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
